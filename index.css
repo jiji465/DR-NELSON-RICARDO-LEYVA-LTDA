@@ -18,27 +18,62 @@
   html, body {
     height: 100%;
     overflow: visible;
+    background-color: white !important;
   }
 
+  body {
+    margin: 0;
+    padding: 0;
+    font-size: 12px; /* Slight reduction for fitting */
+  }
+
+  /* --- 1. Fix Header --- */
+  header {
+    background-color: #1e3a8a !important;
+    color: white !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    box-shadow: none !important;
+    padding-top: 20px !important;
+    padding-bottom: 20px !important;
+  }
+  
+  /* Hide decorative blobs in header */
+  header .absolute {
+    display: none !important;
+  }
+
+  /* --- 2. Side-by-Side Cards (Grid) --- */
+  .print-grid-2 {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* --- 3. Colors & Charts --- */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .recharts-wrapper {
+    width: 100% !important;
+  }
+
+  /* --- 4. Cleanup (Hide Buttons) --- */
   .no-print {
     display: none !important;
   }
-  
-  body {
-    background-color: white;
-    margin: 0;
-    padding: 0;
-    width: 210mm;
-    height: 297mm;
-  }
 
-  /* Force charts to render correctly */
-  svg {
-    shape-rendering: geometricPrecision;
-  }
-
-  .break-inside-avoid {
+  /* Ensure page breaks don't cut content */
+  section, .card {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+  
+  /* Remove shadows for cleaner print */
+  .shadow-xl, .shadow-2xl, .shadow-lg, .shadow-md, .shadow-sm {
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
   }
 }
