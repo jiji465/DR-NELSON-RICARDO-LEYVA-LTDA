@@ -11,7 +11,7 @@ const VerdictSection: React.FC<VerdictSectionProps> = ({ data }) => {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
     
   return (
-    <div className="bg-[#1e3a8a] text-white rounded-3xl shadow-2xl shadow-blue-900/30 overflow-hidden relative">
+    <div className="bg-[#1e3a8a] text-white rounded-3xl shadow-2xl shadow-blue-900/30 overflow-hidden relative bg-navy">
       {/* Decorative gradients - Hide on print */}
       <div className="no-print absolute top-0 right-0 p-48 bg-[#C5A059] rounded-full mix-blend-soft-light filter blur-[80px] opacity-30 transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
       <div className="no-print absolute bottom-0 left-0 p-32 bg-blue-500 rounded-full mix-blend-screen filter blur-[60px] opacity-10 transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>

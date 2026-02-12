@@ -43,28 +43,28 @@ const App: React.FC = () => {
           </div>
 
           {/* KPI SECTION: Revenue & Savings Side-by-Side */}
-          {/* Uses print-grid-2 class defined in CSS to force layout in PDF */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print-grid-2">
+          {/* Using grid layout that persists in print via print-grid-2 class */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print-grid-2 break-inside-avoid">
             
             {/* Card 1: Faturamento */}
             <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/60 p-8 print:p-6 border border-slate-100 relative overflow-hidden card">
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-2">Faturamento Apurado</p>
-                  <p className="text-4xl font-bold text-[#1e3a8a] tracking-tight">{formatCurrency(CLIENT_DATA.revenue)}</p>
+                  <p className="text-4xl font-bold text-[#1e3a8a] tracking-tight text-navy">{formatCurrency(CLIENT_DATA.revenue)}</p>
                 </div>
                 <div className="p-3 bg-blue-50 text-[#1e3a8a] rounded-full">
                   <FileCheck className="w-6 h-6" />
                 </div>
               </div>
               <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2">
-                <span className="w-2 h-2 bg-[#1e3a8a] rounded-full animate-pulse print:hidden"></span>
-                <span className="text-xs font-semibold text-[#1e3a8a] uppercase tracking-wide">Apuração Fechada</span>
+                <span className="w-2 h-2 bg-[#1e3a8a] rounded-full animate-pulse no-print"></span>
+                <span className="text-xs font-semibold text-[#1e3a8a] uppercase tracking-wide text-navy">Apuração Fechada</span>
               </div>
             </div>
 
-            {/* Card 2: Economia Mensal (Moved here for better print layout) */}
-            <div className="bg-[#1e3a8a] rounded-2xl shadow-xl p-8 print:p-6 border border-blue-900 relative overflow-hidden text-white card">
+            {/* Card 2: Economia Mensal */}
+            <div className="bg-[#1e3a8a] rounded-2xl shadow-xl p-8 print:p-6 border border-blue-900 relative overflow-hidden text-white card bg-navy">
                <div className="flex justify-between items-start relative z-10">
                   <div>
                       <p className="text-blue-200 text-xs font-bold uppercase tracking-wider mb-2">Economia Mensal</p>
@@ -84,7 +84,7 @@ const App: React.FC = () => {
           </div>
 
           {/* CHARTS SECTION */}
-          <section className="print-grid-2 grid lg:grid-cols-2 gap-8 items-stretch">
+          <section className="print-grid-2 grid lg:grid-cols-2 gap-8 items-stretch break-inside-avoid">
               <ComparisonChart data={COMPARISON_DATA} />
               <div className="flex flex-col gap-8 h-full">
                   <div className="flex-1">
@@ -97,20 +97,20 @@ const App: React.FC = () => {
           </section>
 
            {/* STRATEGY EXPLANATION */}
-          <section className="card">
+          <section className="break-inside-avoid">
                <EquiparacaoInfo data={BENEFIT_DATA} />
           </section>
 
           {/* VERDICT (Annual Projection) */}
-          <section className="card">
+          <section className="break-inside-avoid">
                <VerdictSection data={BENEFIT_DATA} />
           </section>
 
           {/* FOOTER */}
-          <footer className="pt-12 pb-8 print:pt-4 print:pb-0 text-center border-t border-slate-200 mt-16 print:mt-4">
+          <footer className="pt-12 pb-8 print:pt-4 print:pb-0 text-center border-t border-slate-200 mt-16 print:mt-4 break-inside-avoid">
               <div className="mb-8 print:mb-2 opacity-80">
-                   <h4 className="text-2xl font-bold text-[#1e3a8a] tracking-widest mb-1">SETE</h4>
-                   <p className="text-xs text-[#C5A059] uppercase tracking-[0.3em] font-bold">Soluções Fiscais</p>
+                   <h4 className="text-2xl font-bold text-[#1e3a8a] tracking-widest mb-1 text-navy">SETE</h4>
+                   <p className="text-xs text-[#C5A059] uppercase tracking-[0.3em] font-bold text-gold">Soluções Fiscais</p>
               </div>
               <p className="text-slate-400 text-xs font-medium">
                   © {new Date().getFullYear()} Documento confidencial • Dr. Nelson Ricardo Leyva

@@ -12,20 +12,20 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   return (
-    <div className="bg-white p-8 md:p-10 print:p-4 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col relative overflow-hidden">
+    <div className="bg-white p-8 md:p-10 print:p-4 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col relative overflow-hidden card">
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#1e3a8a]"></div>
 
       <div className="mb-6 print:mb-2">
-        <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">
+        <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2 text-navy">
           Comparativo de Carga
         </h3>
         <p className="text-sm text-slate-500 font-medium leading-relaxed">
-          Confronto direto: <span className="text-[#1e3a8a] font-semibold">Regime Atual (Lucro Presumido)</span> vs. Simples Nacional.
+          Confronto direto: <span className="text-[#1e3a8a] font-semibold text-navy">Regime Atual</span> vs. Simples Nacional.
         </p>
       </div>
 
-      <div className="flex-grow w-full h-80 print:h-56 mb-8 print:mb-4">
+      <div className="flex-grow w-full h-80 print:h-48 mb-8 print:mb-4">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ top: 0, right: 80, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
@@ -54,7 +54,7 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
               }}
             />
             {/* Animation disabled for perfect PDF rendering */}
-            <Bar dataKey="totalTax" radius={[0, 6, 6, 0]} barSize={48} isAnimationActive={false}>
+            <Bar dataKey="totalTax" radius={[0, 6, 6, 0]} barSize={40} isAnimationActive={false}>
               {data.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.color} />
               ))}
@@ -63,7 +63,7 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
                 dataKey="totalTax" 
                 position="right" 
                 formatter={(value: number) => formatCurrency(value)}
-                style={{ fill: '#1e3a8a', fontSize: '13px', fontWeight: '700' }}
+                style={{ fill: '#1e3a8a', fontSize: '12px', fontWeight: '700' }}
               />
             </Bar>
           </BarChart>
@@ -81,7 +81,7 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
                  </div>
                  <div>
                    <div className="flex items-center gap-2 mb-1">
-                      <p className={`text-base leading-none ${isWinner ? 'text-[#1e3a8a] font-bold' : 'text-slate-600 font-medium'}`}>{item.regime}</p>
+                      <p className={`text-base leading-none ${isWinner ? 'text-[#1e3a8a] font-bold text-navy' : 'text-slate-600 font-medium'}`}>{item.regime}</p>
                       {isWinner && <span className="text-[10px] uppercase tracking-wider text-[#C5A059] bg-[#C5A059]/10 px-2 py-0.5 rounded-full font-bold">Vigente</span>}
                    </div>
                    <p className="text-xs text-slate-400 font-medium">Carga Real Apurada: {item.effectiveRate}%</p>

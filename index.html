@@ -17,6 +17,10 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                     },
+                    colors: {
+                        navy: '#1e3a8a',
+                        gold: '#C5A059',
+                    }
                 },
             },
         }
@@ -43,7 +47,7 @@
                 background-color: white !important;
                 margin: 0;
                 padding: 0;
-                font-size: 11px; /* Slight scale down to fit everything comfortably */
+                font-size: 11px; /* Escala ajustada para caber em uma folha */
             }
 
             /* --- Layout Utilities --- */
@@ -57,7 +61,7 @@
             }
 
             /* --- Grid Fixes for Print --- */
-            /* Forces the KPI cards and Charts to be side-by-side */
+            /* Força os cards KPI e Gráficos a ficarem lado a lado na impressão */
             .print-grid-2 {
                 display: grid !important;
                 grid-template-columns: 1fr 1fr !important;
@@ -66,7 +70,7 @@
 
             /* --- Header Specifics --- */
             header {
-                background-color: #1e3a8a !important; /* Force Navy Blue */
+                background-color: #1e3a8a !important;
                 color: white !important;
                 padding-top: 1.5rem !important;
                 padding-bottom: 1.5rem !important;
@@ -75,23 +79,20 @@
                 box-shadow: none !important;
             }
             
-            /* Hide the decorative blobs/gradients in header to prevent print artifacts */
             header .absolute {
                 display: none !important;
             }
 
-            /* --- Card Styling Fixes --- */
+            /* --- Style Fixes --- */
             .card-shadow-fix {
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
             }
 
-            /* --- Chart Fixes --- */
             .recharts-wrapper {
                 width: 100% !important;
             }
             
-            /* Ensure text colors print correctly */
             .text-navy { color: #1e3a8a !important; }
             .text-gold { color: #C5A059 !important; }
             .bg-navy { background-color: #1e3a8a !important; }
@@ -99,14 +100,14 @@
         }
     </style>
 
-    <!-- Import Map for React & Modules -->
+    <!-- Import Map for React & Modules (Fixed Versions) -->
     <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@18.2.0",
     "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "recharts": "https://esm.sh/recharts@2.12.2?external=react,react-dom",
-    "lucide-react": "https://esm.sh/lucide-react@0.344.0?external=react,react-dom",
+    "recharts": "https://esm.sh/recharts@2.12.2?deps=react@18.2.0,react-dom@18.2.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.344.0?deps=react@18.2.0,react-dom@18.2.0",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
     "react/": "https://esm.sh/react@^19.2.4/",
     "vite": "https://esm.sh/vite@^7.3.1",
