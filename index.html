@@ -16,8 +16,8 @@
       
       @media print {
         @page {
-          size: A4;
           margin: 10mm;
+          size: auto;
         }
         
         .no-print {
@@ -28,6 +28,16 @@
           background-color: white;
           margin: 0;
           padding: 0;
+          width: 100%;
+        }
+
+        /* Force single column layout for safety in print if needed, or rely on grid */
+        /* Ensuring container fits */
+        main {
+          width: 100% !important;
+          max-width: 100% !important;
+          margin: 0 !important;
+          padding: 0 !important;
         }
         
         /* Ensure charts render sharply */
