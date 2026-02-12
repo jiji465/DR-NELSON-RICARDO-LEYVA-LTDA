@@ -9,8 +9,12 @@ import { CLIENT_DATA, COMPARISON_DATA, BREAKDOWN_DATA, BENEFIT_DATA } from './co
 
 const App: React.FC = () => {
   const handlePrint = () => {
-    // Direct call to avoid browser popup blockers or "user gesture" expiration
-    window.print();
+    // Focus ensures the print dialog is attached to the correct window
+    window.focus();
+    // A small timeout allows UI states (like ripple effects) to settle before printing
+    setTimeout(() => {
+        window.print();
+    }, 50);
   };
 
   const formatCurrency = (value: number) => 
@@ -23,10 +27,10 @@ const App: React.FC = () => {
         competence={CLIENT_DATA.competence} 
       />
 
-      <main className="max-w-6xl mx-auto px-6 md:px-8 -mt-16 relative z-20 space-y-8 print:w-full print:max-w-none print:px-0 print:mt-0">
+      <main className="max-w-6xl mx-auto px-6 md:px-8 -mt-16 relative z-20 space-y-8 print:w-full print:max-w-none print:px-0 print:mt-0 print:z-0">
         
         {/* Executive Summary Bar */}
-        <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/60 p-8 flex flex-col md:flex-row justify-between items-center gap-8 print:shadow-none print:border border-slate-200 relative overflow-visible print:p-0 print:mb-8 print:border-b">
+        <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/60 p-8 flex flex-col md:flex-row justify-between items-center gap-8 print:shadow-none print:border-b print:border-slate-200 relative overflow-visible print:p-0 print:mb-8">
           <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-12 w-full md:w-auto text-center md:text-left">
             <div>
               <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-2">Faturamento Apurado</p>
@@ -35,7 +39,7 @@ const App: React.FC = () => {
             <div className="hidden md:block w-px h-12 bg-slate-200 print:hidden"></div>
             <div>
                  <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-2">Situação</p>
-                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-[#1e3a8a] rounded-full text-sm font-semibold border border-blue-100 print:border-none print:p-0">
+                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-[#1e3a8a] rounded-full text-sm font-semibold border border-blue-100 print:border-none print:bg-transparent print:p-0">
                     <span className="w-2 h-2 bg-[#1e3a8a] rounded-full animate-pulse print:hidden"></span>
                     Apuração Fechada
                  </div>
