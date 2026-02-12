@@ -29,22 +29,68 @@
             print-color-adjust: exact !important;
         }
         @media print {
-            @page { margin: 10mm; size: auto; }
+            @page { 
+                margin: 0;
+                size: A4 portrait; 
+            }
+            html, body {
+                height: 100%;
+                width: 210mm;
+                background-color: white !important;
+            }
+            body {
+                padding: 10mm; /* Internal padding instead of page margin for background colors */
+            }
+            
+            /* Utility to hide elements in print */
             .no-print { display: none !important; }
-            body { background-color: white; margin: 0; width: 100%; }
-            main { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
-            .break-inside-avoid { break-inside: avoid; page-break-inside: avoid; }
+            
+            /* Force background graphics */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Layout adjustments */
+            .print-grid-2 {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                gap: 1.5rem !important;
+            }
+            
+            .print-full-width {
+                width: 100% !important;
+                max-width: none !important;
+            }
+
+            /* Header Fixes */
+            header {
+                padding-top: 1rem !important;
+                padding-bottom: 2rem !important;
+                background-color: #1e3a8a !important; /* Ensure Navy background prints */
+                color: white !important;
+                border-radius: 1rem !important;
+                margin-bottom: 1.5rem !important;
+            }
+            header .absolute { display: none !important; } /* Hide blurs */
+
+            /* Chart Fixes */
+            .recharts-wrapper { width: 100% !important; }
+            
+            /* Avoid breaks */
+            .break-inside-avoid {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
         }
-        .recharts-wrapper { width: 100% !important; }
     </style>
 
-    <!-- Import Map (CORRECTED) -->
+    <!-- Import Map -->
     <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@18.2.0",
     "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
-    "react-dom": "https://esm.sh/react-dom@18.2.0",
     "recharts": "https://esm.sh/recharts@2.12.2?external=react,react-dom",
     "lucide-react": "https://esm.sh/lucide-react@0.344.0?external=react,react-dom",
     "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
@@ -55,7 +101,7 @@
 }
 </script>
 
-    <!-- Babel for JSX -->
+    <!-- Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body class="text-slate-800 antialiased bg-slate-50 min-h-screen">
@@ -73,14 +119,7 @@
             ArrowRight, ShieldCheck, FileCheck, Wallet, TrendingUp 
         } from 'lucide-react';
 
-        // --- CONSTANTS & DATA ---
-        const COLORS = {
-            NAVY: "#1e3a8a", 
-            GOLD: "#C5A059", 
-            SLATE_DARK: "#334155",
-            SLATE_LIGHT: "#94a3b8"
-        };
-
+        // --- DATA ---
         const CLIENT_DATA = {
             clientName: "DR NELSON RICARDO LEYVA LTDA",
             competence: "01/2026",
@@ -88,24 +127,14 @@
         };
 
         const COMPARISON_DATA = [
-            {
-                regime: "Simples Nacional",
-                totalTax: 3101.60,
-                effectiveRate: 18.65,
-                color: COLORS.SLATE_LIGHT 
-            },
-            {
-                regime: "Lucro Presumido (SETE)",
-                totalTax: 2697.86,
-                effectiveRate: 16.22,
-                color: COLORS.NAVY 
-            }
+            { regime: "Simples Nacional", totalTax: 3101.60, effectiveRate: 18.65, color: "#94a3b8" },
+            { regime: "Lucro Presumido (SETE)", totalTax: 2697.86, effectiveRate: 16.22, color: "#1e3a8a" }
         ];
 
         const BREAKDOWN_DATA = [
-            { name: "Impostos Federais (Otimizados)", value: 1426.56, color: COLORS.NAVY }, 
-            { name: "ISS (Municipal)", value: 831.75, color: COLORS.GOLD },  
-            { name: "Encargos Folha", value: 439.55, color: COLORS.SLATE_DARK } 
+            { name: "Impostos Federais", value: 1426.56, color: "#1e3a8a" }, 
+            { name: "ISS (Municipal)", value: 831.75, color: "#C5A059" },  
+            { name: "Encargos Folha", value: 439.55, color: "#334155" } 
         ];
 
         const BENEFIT_DATA = {
@@ -116,381 +145,205 @@
             annualSavings: 4844.88
         };
 
+        const formatCurrency = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
         // --- COMPONENTS ---
 
-        const Header = ({ clientName, competence }) => {
-            return (
-                <header className="bg-[#1e3a8a] text-white pt-16 pb-24 shadow-2xl shadow-blue-900/20 print:shadow-none relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#C5A059] opacity-15 rounded-full blur-[100px] transform translate-x-1/3 -translate-y-1/2 pointer-events-none"></div>
-                    <div className="absolute bottom-0 left-0 w-96 h-96 bg-black opacity-30 rounded-full blur-[80px] transform -translate-x-1/3 translate-y-1/2 pointer-events-none"></div>
-                    
-                    <div className="max-w-6xl mx-auto px-6 md:px-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-8 relative z-10">
-                        <div className="md:max-w-3xl">
-                            <div className="flex items-center gap-3 mb-6 opacity-90">
-                                <div className="h-[2px] w-8 bg-[#C5A059]"></div>
-                                <span className="text-sm font-bold tracking-[0.2em] uppercase text-[#C5A059]">Demonstrativo Mensal</span>
-                            </div>
-                            <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4 tracking-tight text-white">
-                                {clientName}
-                            </h1>
-                            <p className="text-blue-100/90 font-light text-base md:text-lg max-w-xl leading-relaxed">
-                                Detalhamento completo da apuração de impostos e performance do regime tributário vigente.
-                            </p>
+        const Header = () => (
+            <header className="bg-[#1e3a8a] text-white pt-12 pb-16 px-8 rounded-b-3xl md:rounded-3xl shadow-xl relative overflow-hidden print:rounded-xl">
+                {/* Decorative blobs - Hidden in print */}
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#C5A059] opacity-15 rounded-full blur-[100px] pointer-events-none no-print"></div>
+                
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 relative z-10">
+                    <div>
+                        <div className="flex items-center gap-3 mb-4 opacity-90">
+                            <div className="h-[2px] w-8 bg-[#C5A059]"></div>
+                            <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#C5A059]">Relatório Mensal</span>
                         </div>
-                        
-                        <div className="bg-white/10 backdrop-blur-lg px-6 py-4 rounded-xl border border-white/10 shadow-lg">
-                            <div className="flex items-center gap-4">
-                                <div className="text-[#C5A059] p-2 bg-white/5 rounded-lg">
-                                    <Calendar className="w-6 h-6" strokeWidth={1.5} />
-                                </div>
-                                <div>
-                                    <p className="text-xs text-blue-200 uppercase tracking-widest font-semibold mb-1">Competência</p>
-                                    <p className="text-2xl font-bold text-white">{competence}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </header>
-            );
-        };
-
-        const ComparisonChart = ({ data }) => {
-            const formatCurrency = (value) => 
-                new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-
-            return (
-                <div className="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col relative overflow-hidden">
-                    <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#1e3a8a]"></div>
-                    <div className="mb-6">
-                        <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">Comparativo de Carga</h3>
-                        <p className="text-sm text-slate-500 font-medium leading-relaxed">
-                            Confronto direto: <span className="text-[#1e3a8a] font-semibold">Regime Atual (Lucro Presumido)</span> vs. Simples Nacional.
+                        <h1 className="text-2xl md:text-4xl font-bold leading-tight mb-2 tracking-tight text-white">
+                            {CLIENT_DATA.clientName}
+                        </h1>
+                        <p className="text-blue-100 font-light text-sm md:text-base">
+                            Análise de Eficiência Tributária
                         </p>
                     </div>
+                    
+                    <div className="bg-white/10 px-5 py-3 rounded-lg border border-white/10 print:bg-[#1e3a8a] print:border-white/30">
+                        <div className="flex items-center gap-3">
+                            <Calendar className="w-5 h-5 text-[#C5A059]" />
+                            <div>
+                                <p className="text-[10px] text-blue-200 uppercase tracking-widest font-semibold">Competência</p>
+                                <p className="text-xl font-bold text-white">{CLIENT_DATA.competence}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        );
 
-                    <div className="flex-grow w-full h-80 mb-8">
+        const KPICards = () => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:gap-6 print-grid-2">
+                {/* Card 1: Faturamento */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-between">
+                    <div>
+                        <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Faturamento Apurado</p>
+                        <p className="text-3xl font-bold text-[#1e3a8a]">{formatCurrency(CLIENT_DATA.revenue)}</p>
+                    </div>
+                    <div className="p-3 bg-blue-50 text-[#1e3a8a] rounded-full">
+                        <FileCheck className="w-6 h-6" />
+                    </div>
+                </div>
+
+                {/* Card 2: Economia (Moved here for Print Alignment) */}
+                <div className="bg-[#1e3a8a] p-6 rounded-2xl shadow-md border border-blue-900 flex items-center justify-between text-white print:bg-[#1e3a8a]">
+                    <div>
+                        <p className="text-xs text-blue-200 font-bold uppercase tracking-wider mb-1">Economia Mensal</p>
+                        <p className="text-3xl font-bold text-white">{formatCurrency(BENEFIT_DATA.monthlySavings)}</p>
+                    </div>
+                    <div className="p-3 bg-white/10 text-[#C5A059] rounded-full">
+                        <Wallet className="w-6 h-6" />
+                    </div>
+                </div>
+            </div>
+        );
+
+        const ChartsSection = () => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 print:gap-6 print-grid-2 items-stretch">
+                {/* Comparison Chart */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full">
+                    <h3 className="text-lg font-bold text-[#1e3a8a] mb-4">Comparativo de Carga</h3>
+                    <div className="h-48 w-full flex-grow">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={data} layout="vertical" margin={{ top: 0, right: 80, left: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                            <BarChart data={COMPARISON_DATA} layout="vertical" margin={{top:0, right:50, bottom:0, left:0}}>
                                 <XAxis type="number" hide />
-                                <YAxis dataKey="regime" type="category" width={0} tick={false} axisLine={false} />
-                                <RechartsTooltip 
-                                    cursor={{fill: 'transparent'}}
-                                    content={({ active, payload }) => {
-                                        if (active && payload && payload.length) {
-                                            const d = payload[0].payload;
-                                            return (
-                                                <div className="bg-[#1e3a8a] text-white px-4 py-3 rounded-lg shadow-xl text-sm border border-blue-800">
-                                                    <p className="font-semibold text-lg">{formatCurrency(d.totalTax)}</p>
-                                                    <p className="text-blue-200 text-xs">Total de Impostos</p>
-                                                </div>
-                                            );
-                                        }
-                                        return null;
-                                    }}
-                                />
-                                <Bar dataKey="totalTax" radius={[0, 6, 6, 0]} barSize={48} isAnimationActive={false}>
-                                    {data.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.color} />
-                                    ))}
-                                    <LabelList 
-                                        dataKey="totalTax" 
-                                        position="right" 
-                                        formatter={(value) => formatCurrency(value)}
-                                        style={{ fill: '#1e3a8a', fontSize: '13px', fontWeight: '700' }}
-                                    />
+                                <YAxis dataKey="regime" type="category" width={10} tick={false} axisLine={false} />
+                                <Bar dataKey="totalTax" radius={[0, 4, 4, 0]} barSize={32}>
+                                    {COMPARISON_DATA.map((e, i) => <Cell key={i} fill={e.color} />)}
+                                    <LabelList dataKey="totalTax" position="right" formatter={formatCurrency} style={{fill:'#1e3a8a', fontSize:'11px', fontWeight:'bold'}} />
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
-                    
-                    <div className="space-y-4">
-                        {data.map((item, idx) => {
-                            const isWinner = idx === 1; 
-                            return (
-                                <div key={item.regime} className={`group flex items-center justify-between p-4 rounded-xl transition-all duration-300 border ${isWinner ? 'bg-blue-50/60 border-blue-100' : 'bg-transparent border-transparent hover:bg-slate-50'}`}>
-                                    <div className="flex items-center gap-4">
-                                        <div className={`p-2 rounded-full ${isWinner ? 'bg-[#1e3a8a] text-white shadow-md shadow-blue-900/20' : 'bg-slate-100 text-slate-400'}`}>
-                                            {isWinner ? <CheckCircle2 className="w-5 h-5" strokeWidth={2} /> : <AlertCircle className="w-5 h-5" strokeWidth={2} />}
-                                        </div>
-                                        <div>
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <p className={`text-base leading-none ${isWinner ? 'text-[#1e3a8a] font-bold' : 'text-slate-600 font-medium'}`}>{item.regime}</p>
-                                                {isWinner && <span className="text-[10px] uppercase tracking-wider text-[#C5A059] bg-[#C5A059]/10 px-2 py-0.5 rounded-full font-bold">Vigente</span>}
-                                            </div>
-                                            <p className="text-xs text-slate-400 font-medium">Carga Real Apurada: {item.effectiveRate}%</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            )
-                        })}
+                    <div className="mt-4 space-y-2">
+                         {COMPARISON_DATA.map((d, i) => (
+                             <div key={i} className="flex justify-between items-center text-xs">
+                                 <div className="flex items-center gap-2">
+                                     <div className={`w-2 h-2 rounded-full`} style={{backgroundColor: d.color}}></div>
+                                     <span className="text-slate-600 font-medium">{d.regime}</span>
+                                 </div>
+                                 <span className="font-bold text-slate-700">{d.effectiveRate}%</span>
+                             </div>
+                         ))}
                     </div>
                 </div>
-            );
-        };
 
-        const CostBreakdown = ({ data, total }) => {
-            const formatCurrency = (value) => 
-                new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-
-            const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-                const RADIAN = Math.PI / 180;
-                const x = cx + (outerRadius + 15) * Math.cos(-midAngle * RADIAN);
-                const y = cy + (outerRadius + 15) * Math.sin(-midAngle * RADIAN);
-                if (percent < 0.05) return null;
-                return (
-                    <text x={x} y={y} fill="#64748b" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize="11" fontWeight="600">
-                        {`${(percent * 100).toFixed(0)}%`}
-                    </text>
-                );
-            };
-
-            return (
-                <div className="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col relative overflow-hidden">
-                    <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#C5A059]"></div>
-                    <div className="mb-6">
-                        <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">Composição</h3>
-                        <p className="text-sm text-slate-500 font-medium">Detalhamento dos tributos pagos</p>
-                    </div>
-
-                    <div className="flex-grow w-full h-72 relative mb-6">
+                {/* Breakdown Chart */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col h-full">
+                    <h3 className="text-lg font-bold text-[#1e3a8a] mb-4">Composição (Presumido)</h3>
+                    <div className="h-48 w-full flex-grow relative">
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
-                                <Pie
-                                    data={data} cx="50%" cy="50%" innerRadius={80} outerRadius={105} paddingAngle={2} dataKey="value" stroke="none" cornerRadius={4}
-                                    isAnimationActive={false} label={renderCustomizedLabel} labelLine={{ stroke: '#cbd5e1', strokeWidth: 1 }}
+                                <Pie 
+                                    data={BREAKDOWN_DATA} cx="50%" cy="50%" innerRadius={60} outerRadius={80} 
+                                    dataKey="value" stroke="none" paddingAngle={2}
                                 >
-                                    {data.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                                    {BREAKDOWN_DATA.map((e, i) => <Cell key={i} fill={e.color} />)}
                                 </Pie>
-                                <RechartsTooltip 
-                                    formatter={(value) => formatCurrency(value)}
-                                    contentStyle={{ borderRadius: '8px', border: 'none', backgroundColor: '#1e3a8a', color: 'white', fontSize: '13px', fontWeight: 500, padding: '12px' }}
-                                    itemStyle={{ color: 'white' }}
-                                />
                             </PieChart>
                         </ResponsiveContainer>
-                        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">
-                                <span className="text-xs text-slate-400 uppercase tracking-widest block mb-1 font-semibold">Total</span>
-                                <span className="text-2xl font-bold text-[#1e3a8a]">{formatCurrency(total)}</span>
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <span className="text-sm font-bold text-[#1e3a8a]">{formatCurrency(COMPARISON_DATA[1].totalTax)}</span>
                         </div>
                     </div>
-
-                    <div className="mt-auto space-y-4">
-                        {data.map((item) => (
-                            <div key={item.name} className="flex items-center justify-between text-sm group p-2 hover:bg-slate-50 rounded-lg transition-colors">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-3 h-3 rounded-full shadow-sm" style={{ backgroundColor: item.color }} />
-                                    <span className="text-slate-600 font-medium group-hover:text-slate-900 transition-colors">{item.name}</span>
-                                </div>
-                                <span className="font-bold text-slate-800">{formatCurrency(item.value)}</span>
+                    <div className="mt-4 space-y-2">
+                        {BREAKDOWN_DATA.map((d, i) => (
+                            <div key={i} className="flex justify-between items-center text-xs border-b border-slate-50 last:border-0 pb-1 last:pb-0">
+                                <span className="text-slate-500">{d.name}</span>
+                                <span className="font-bold text-slate-700">{formatCurrency(d.value)}</span>
                             </div>
                         ))}
                     </div>
                 </div>
-            );
-        };
+            </div>
+        );
 
-        const EquiparacaoInfo = ({ data }) => {
-            const formatCurrency = (value) => 
-                new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-
-            return (
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-8 md:p-12 relative overflow-hidden">
-                    <div className="absolute left-0 top-0 bottom-0 w-2 bg-[#C5A059]"></div>
-                    <div className="flex flex-col md:flex-row gap-12 items-center">
-                        <div className="md:w-5/12">
-                            <div className="inline-block px-4 py-1.5 bg-blue-50 text-[#1e3a8a] text-xs font-bold uppercase tracking-widest mb-6 rounded-full border border-blue-100">
-                                Estratégia Aplicada
-                            </div>
-                            <h3 className="text-3xl font-bold text-[#1e3a8a] mb-5 leading-tight">Equiparação Hospitalar</h3>
-                            <p className="text-slate-600 text-base leading-relaxed mb-8">
-                                Nesta competência, aplicamos o benefício da Equiparação Hospitalar sobre os serviços elegíveis. Este mecanismo legal <strong className="text-slate-800">reduziu a base de cálculo</strong> dos impostos federais (IRPJ/CSLL), gerando o resultado apurado.
-                            </p>
-                            <div className="flex items-center gap-3 text-[#C5A059] font-bold text-sm bg-[#C5A059]/5 p-4 rounded-xl border border-[#C5A059]/20 w-fit">
-                                <ShieldCheck className="w-5 h-5" strokeWidth={2} />
-                                <span>Benefício aplicado com sucesso</span>
-                            </div>
-                        </div>
-                        <div className="md:w-7/12 w-full flex flex-col gap-6">
-                            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
-                                <div className="mb-8 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-                                    <div className="flex justify-between items-end mb-3">
-                                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">Cenário Padrão (Sem Estratégia)</span>
-                                        <span className="text-sm font-bold text-slate-600 bg-slate-200 px-2 py-1 rounded">Base 32%</span>
-                                    </div>
-                                    <div className="h-12 w-full bg-slate-200 rounded-lg relative overflow-hidden">
-                                        <div className="absolute left-0 top-0 h-full w-[32%] bg-slate-400"></div>
-                                    </div>
-                                    <p className="text-xs text-right mt-2 text-slate-500 font-medium">Tributação incidiria sobre {formatCurrency(data.withoutBenefitBase)}</p>
-                                </div>
-                                <div className="h-px bg-slate-200 w-full mb-8 relative">
-                                    <div className="absolute left-1/2 -top-3 -translate-x-1/2 bg-slate-50 px-3 text-slate-300">
-                                        <ArrowRight className="w-6 h-6 rotate-90" strokeWidth={1.5} />
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="flex justify-between items-end mb-3">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-xs font-bold text-[#1e3a8a] uppercase tracking-wide">Base Reduzida Aplicada</span>
-                                            <span className="w-2 h-2 rounded-full bg-[#C5A059]"></span>
-                                        </div>
-                                        <span className="text-sm font-bold text-white bg-[#1e3a8a] px-3 py-1 rounded shadow-md shadow-blue-900/10">Base 8% - 12%</span>
-                                    </div>
-                                    <div className="h-14 w-full bg-white border-2 border-[#1e3a8a]/10 rounded-xl relative overflow-hidden flex items-center px-4 shadow-sm">
-                                        <div className="absolute left-0 top-0 h-full bg-[#1e3a8a] w-[10%]"></div>
-                                        <div className="relative z-10 w-full flex justify-between items-center pl-4">
-                                            <span className="text-sm text-slate-500 font-medium">Nova Base de Cálculo</span>
-                                            <span className="text-xl font-bold text-[#1e3a8a]">{formatCurrency(data.withBenefitBase)}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+        const StrategySection = () => (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-8 items-center print:break-inside-avoid">
+                <div className="md:w-1/2">
+                    <div className="inline-block px-3 py-1 bg-blue-50 text-[#1e3a8a] text-[10px] font-bold uppercase tracking-widest rounded-full mb-3">
+                        Estratégia
+                    </div>
+                    <h3 className="text-xl font-bold text-[#1e3a8a] mb-3">Equiparação Hospitalar</h3>
+                    <p className="text-sm text-slate-600 leading-relaxed">
+                        A aplicação da Equiparação Hospitalar reduziu drasticamente a base de cálculo de IRPJ e CSLL (de 32% para 8%/12%) sobre os serviços elegíveis.
+                    </p>
+                </div>
+                <div className="md:w-1/2 w-full bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs text-slate-500">Sem Benefício</span>
+                        <span className="text-xs font-bold text-slate-400 line-through">{formatCurrency(BENEFIT_DATA.withoutBenefitBase)}</span>
+                    </div>
+                    <div className="h-2 w-full bg-slate-200 rounded-full mb-4 overflow-hidden">
+                         <div className="h-full bg-slate-400 w-full opacity-30"></div>
+                    </div>
+                    
+                    <div className="flex justify-between items-center mb-2">
+                        <span className="text-xs font-bold text-[#1e3a8a]">Com Benefício</span>
+                        <span className="text-sm font-bold text-[#1e3a8a]">{formatCurrency(BENEFIT_DATA.withBenefitBase)}</span>
+                    </div>
+                    <div className="h-3 w-full bg-blue-100 rounded-full overflow-hidden">
+                         <div className="h-full bg-[#1e3a8a] w-[30%]"></div>
                     </div>
                 </div>
-            );
-        };
+            </div>
+        );
 
-        const VerdictSection = ({ data }) => {
-            const formatCurrency = (value) => 
-                new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
-
-            return (
-                <div className="bg-[#1e3a8a] text-white rounded-3xl shadow-2xl shadow-blue-900/30 overflow-hidden print:break-inside-avoid relative">
-                    <div className="absolute top-0 right-0 p-48 bg-[#C5A059] rounded-full mix-blend-soft-light filter blur-[80px] opacity-30 transform translate-x-1/2 -translate-y-1/2 pointer-events-none"></div>
-                    <div className="absolute bottom-0 left-0 p-32 bg-blue-500 rounded-full mix-blend-screen filter blur-[60px] opacity-10 transform -translate-x-1/2 translate-y-1/2 pointer-events-none"></div>
-
-                    <div className="p-8 md:p-14 grid md:grid-cols-2 gap-16 items-start relative z-10">
-                        <div>
-                            <div className="inline-flex items-center gap-2 border border-[#C5A059] text-[#C5A059] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-[0.15em] mb-8 bg-[#C5A059]/5">
-                                <FileCheck className="w-4 h-4" strokeWidth={1.5} />
-                                Resultado da Competência
-                            </div>
-                            <h3 className="text-3xl md:text-4xl font-bold mb-6 leading-tight text-white">
-                                Eficiência tributária <span className="text-blue-200">garantida</span> neste mês.
-                            </h3>
-                            <p className="text-blue-50/90 text-lg font-normal leading-relaxed mb-10">
-                                A apuração do período confirma que o <strong>Lucro Presumido com Equiparação</strong> entregou o menor custo tributário possível para a clínica, garantindo conformidade e caixa.
-                            </p>
-                            
-                            <div className="grid grid-cols-2 gap-6">
-                                <div className="bg-white/10 border border-white/10 p-4 rounded-xl backdrop-blur-sm">
-                                    <p className="text-[#C5A059] text-xs font-bold uppercase tracking-wider mb-2">Status</p>
-                                    <p className="text-base font-medium text-white">Apuração Concluída</p>
-                                </div>
-                                <div className="bg-white/10 border border-white/10 p-4 rounded-xl backdrop-blur-sm">
-                                    <p className="text-[#C5A059] text-xs font-bold uppercase tracking-wider mb-2">Conformidade</p>
-                                    <p className="text-base font-medium text-white">100% Legal</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col gap-6">
-                            <div className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur-md shadow-2xl relative overflow-hidden group">
-                                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700"></div>
-                                <div className="relative z-10">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <div>
-                                            <p className="text-blue-200 text-xs font-bold uppercase tracking-[0.2em] mb-2">Economia Mensal</p>
-                                            <p className="text-blue-100/70 text-sm font-normal">Valor poupado nesta competência</p>
-                                        </div>
-                                        <div className="p-3 bg-[#C5A059]/20 rounded-xl text-[#C5A059]">
-                                            <Wallet className="w-6 h-6" strokeWidth={1.5} />
-                                        </div>
-                                    </div>
-                                    <p className="text-4xl md:text-5xl font-bold text-white mb-2 tracking-tight">
-                                        {formatCurrency(data.monthlySavings)}
-                                    </p>
-                                    <p className="text-xs text-blue-200 font-medium pl-1 border-l-2 border-[#C5A059]">Diferença vs. Simples Nacional</p>
-                                </div>
-                            </div>
-
-                            <div className="bg-emerald-500/20 border border-emerald-500/30 rounded-2xl p-6 backdrop-blur-md relative overflow-hidden">
-                                <div className="flex items-center gap-4">
-                                    <div className="p-3 bg-emerald-500/20 rounded-full text-emerald-400">
-                                        <TrendingUp className="w-6 h-6" />
-                                    </div>
-                                    <div>
-                                        <p className="text-emerald-300 text-xs font-bold uppercase tracking-wider mb-1">Projeção Anual</p>
-                                        <p className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-                                            {formatCurrency(data.annualSavings)}
-                                        </p>
-                                        <p className="text-emerald-100/60 text-xs mt-1">Economia estimada em 12 meses</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            );
-        };
+        const FinalVerdict = () => (
+            <div className="bg-emerald-50 border border-emerald-100 p-6 rounded-2xl flex items-center justify-between print:break-inside-avoid">
+                 <div className="flex items-center gap-4">
+                     <div className="bg-white p-3 rounded-full shadow-sm text-emerald-600">
+                         <TrendingUp className="w-6 h-6" />
+                     </div>
+                     <div>
+                         <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider">Projeção Anual</p>
+                         <p className="text-emerald-800 text-sm">Economia acumulada estimada em 12 meses</p>
+                     </div>
+                 </div>
+                 <div className="text-right">
+                     <p className="text-2xl font-bold text-emerald-700">{formatCurrency(BENEFIT_DATA.annualSavings)}</p>
+                 </div>
+            </div>
+        );
 
         const App = () => {
-            const handlePrint = () => {
-                setTimeout(() => window.print(), 150);
-            };
-
-            const formatCurrency = (value) => 
-                new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+            const handlePrint = () => setTimeout(() => window.print(), 100);
 
             return (
-                <div className="min-h-screen pb-20 bg-slate-50 font-sans print:bg-white text-slate-800 selection:bg-[#C5A059] selection:text-white">
-                    <Header clientName={CLIENT_DATA.clientName} competence={CLIENT_DATA.competence} />
+                <div className="max-w-4xl mx-auto p-4 md:p-8 space-y-6 print:space-y-6 print:p-0">
+                    <Header />
+                    
+                    <div className="flex justify-end no-print">
+                        <button onClick={handlePrint} className="bg-[#1e3a8a] text-white px-6 py-2 rounded-lg font-semibold text-sm flex items-center gap-2 hover:bg-blue-900 transition-colors shadow-lg">
+                            <Printer className="w-4 h-4" />
+                            Imprimir PDF
+                        </button>
+                    </div>
 
-                    <main className="max-w-6xl mx-auto px-6 md:px-8 -mt-16 relative z-20 space-y-8">
-                        
-                        <div className="bg-white rounded-2xl shadow-xl shadow-slate-200/60 p-8 flex flex-col md:flex-row justify-between items-center gap-8 print:shadow-none print:border border-slate-200 relative overflow-visible">
-                            <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-12 w-full md:w-auto text-center md:text-left">
-                                <div>
-                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-2">Faturamento Apurado</p>
-                                    <p className="text-4xl font-bold text-[#1e3a8a] tracking-tight">{formatCurrency(CLIENT_DATA.revenue)}</p>
-                                </div>
-                                <div className="hidden md:block w-px h-12 bg-slate-200"></div>
-                                <div>
-                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mb-2">Situação</p>
-                                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-blue-50 text-[#1e3a8a] rounded-full text-sm font-semibold border border-blue-100">
-                                        <span className="w-2 h-2 bg-[#1e3a8a] rounded-full animate-pulse"></span>
-                                        Apuração Fechada
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <button onClick={handlePrint} className="no-print relative z-50 group flex items-center gap-3 px-8 py-3.5 bg-[#1e3a8a] hover:bg-[#172554] text-white rounded-xl transition-all font-semibold text-sm uppercase tracking-wide shadow-lg hover:shadow-xl active:scale-95 cursor-pointer">
-                                <Printer className="w-5 h-5 stroke-[1.5]" />
-                                <span>Imprimir / Salvar PDF</span>
-                                <ChevronRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
-                            </button>
-                        </div>
+                    {/* Metrics Row: Faturamento & Economia side by side */}
+                    <KPICards />
+                    
+                    {/* Charts Row */}
+                    <ChartsSection />
+                    
+                    {/* Info Section */}
+                    <StrategySection />
+                    
+                    {/* Final Verdict */}
+                    <FinalVerdict />
 
-                        <section className="print:break-inside-avoid">
-                            <div className="grid lg:grid-cols-2 gap-8 items-stretch">
-                                <ComparisonChart data={COMPARISON_DATA} />
-                                <div className="flex flex-col gap-8">
-                                    <div className="flex-1">
-                                        <CostBreakdown data={BREAKDOWN_DATA} total={COMPARISON_DATA[1].totalTax} />
-                                    </div>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section className="print:break-inside-avoid">
-                            <EquiparacaoInfo data={BENEFIT_DATA} />
-                        </section>
-
-                        <section className="print:break-inside-avoid">
-                            <VerdictSection data={{...BENEFIT_DATA}} />
-                        </section>
-
-                        <footer className="pt-12 pb-8 text-center border-t border-slate-200 mt-16 print:mt-8 print:break-inside-avoid">
-                            <div className="mb-8 opacity-80">
-                                <h4 className="text-2xl font-bold text-[#1e3a8a] tracking-widest mb-1">SETE</h4>
-                                <p className="text-xs text-[#C5A059] uppercase tracking-[0.3em] font-bold">Soluções Fiscais</p>
-                            </div>
-                            <p className="text-slate-400 text-xs font-medium">
-                                © {new Date().getFullYear()} Documento confidencial • Dr. Nelson Ricardo Leyva
-                            </p>
-                        </footer>
-                    </main>
+                    <footer className="text-center pt-8 border-t border-slate-100 text-slate-400 text-xs print:pt-4">
+                        SETE Soluções Fiscais • Documento Confidencial
+                    </footer>
                 </div>
             );
         };
