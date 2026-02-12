@@ -38,18 +38,18 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({ data, total }) => {
   };
 
   return (
-    <div className="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col relative overflow-hidden">
+    <div className="bg-white p-8 md:p-10 print:p-4 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col relative overflow-hidden">
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#C5A059]"></div>
 
-      <div className="mb-6">
+      <div className="mb-6 print:mb-2">
         <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">
           Composição
         </h3>
         <p className="text-sm text-slate-500 font-medium">Detalhamento dos tributos pagos</p>
       </div>
 
-      <div className="flex-grow w-full h-72 relative mb-6">
+      <div className="flex-grow w-full h-72 print:h-56 relative mb-6 print:mb-2">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -84,7 +84,7 @@ const CostBreakdown: React.FC<CostBreakdownProps> = ({ data, total }) => {
         </div>
       </div>
 
-      <div className="mt-auto space-y-4">
+      <div className="mt-auto space-y-4 print:space-y-1">
         {data.map((item) => (
           <div key={item.name} className="flex items-center justify-between text-sm group p-2 hover:bg-slate-50 rounded-lg transition-colors">
             <div className="flex items-center gap-3">

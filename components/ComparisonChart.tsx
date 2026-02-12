@@ -12,11 +12,11 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
     new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 
   return (
-    <div className="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col relative overflow-hidden">
+    <div className="bg-white p-8 md:p-10 print:p-4 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col relative overflow-hidden">
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#1e3a8a]"></div>
 
-      <div className="mb-6">
+      <div className="mb-6 print:mb-2">
         <h3 className="text-2xl font-bold text-[#1e3a8a] mb-2">
           Comparativo de Carga
         </h3>
@@ -25,7 +25,7 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
         </p>
       </div>
 
-      <div className="flex-grow w-full h-80 mb-8">
+      <div className="flex-grow w-full h-80 print:h-56 mb-8 print:mb-4">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ top: 0, right: 80, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
@@ -70,11 +70,11 @@ const ComparisonChart: React.FC<ComparisonChartProps> = ({ data }) => {
         </ResponsiveContainer>
       </div>
       
-      <div className="space-y-4">
+      <div className="space-y-4 print:space-y-2">
         {data.map((item, idx) => {
           const isWinner = idx === 1; 
           return (
-            <div key={item.regime} className={`group flex items-center justify-between p-4 rounded-xl transition-all duration-300 border ${isWinner ? 'bg-blue-50/60 border-blue-100' : 'bg-transparent border-transparent hover:bg-slate-50'}`}>
+            <div key={item.regime} className={`group flex items-center justify-between p-4 print:p-2 rounded-xl transition-all duration-300 border ${isWinner ? 'bg-blue-50/60 border-blue-100' : 'bg-transparent border-transparent hover:bg-slate-50'}`}>
               <div className="flex items-center gap-4">
                  <div className={`p-2 rounded-full ${isWinner ? 'bg-[#1e3a8a] text-white shadow-md shadow-blue-900/20' : 'bg-slate-100 text-slate-400'}`}>
                     {isWinner ? <CheckCircle2 className="w-5 h-5" strokeWidth={2} /> : <AlertCircle className="w-5 h-5" strokeWidth={2} />}

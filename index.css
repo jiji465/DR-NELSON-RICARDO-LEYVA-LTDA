@@ -11,10 +11,15 @@
 
 @media print {
   @page {
-    margin: 10mm;
-    size: auto;
+    margin: 5mm;
+    size: A4 portrait;
   }
   
+  html, body {
+    height: 100%;
+    overflow: visible;
+  }
+
   .no-print {
     display: none !important;
   }
@@ -23,16 +28,11 @@
     background-color: white;
     margin: 0;
     padding: 0;
-    width: 100%;
+    width: 210mm;
+    height: 297mm;
   }
 
-  main {
-    width: 100% !important;
-    max-width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  
+  /* Force charts to render correctly */
   svg {
     shape-rendering: geometricPrecision;
   }
